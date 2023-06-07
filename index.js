@@ -44,13 +44,33 @@ app.get('/add-note', async(req, res) => {
 });
 
 app.get('/books', async(req, res) =>{
-    const book = await Book.find();
 
-    if(book){
-        res.json(book)
-    } else {
-        res.send("Something went wrong");
+    const bookTitle = req.query.title;
+
+    if(bookTitle){
+        const book = await Book.findOne({title: bookTitle}).exec();
+        if(book){
+            res.status(200);
+            res.json(book);
+        }else{
+            res.status(404);
+            res.send("We could not find the file");
+        }
+    } else{
+        const book = await Book.find();
+
+        if(book){
+            res.status(200);
+            res.json(book)
+        } else {
+            res.status(404)
+            res.send("Something went wrong. No books were found!");
+        }
     }
+
+
+
+
 });
 
 connectDB().then(() => {
